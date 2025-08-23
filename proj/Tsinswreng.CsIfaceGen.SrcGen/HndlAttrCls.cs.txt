@@ -1,0 +1,80 @@
+namespace Tsinswreng.CsIfaceAttr.SrcGen;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+
+
+/*
+現在有
+namespace Tsinswreng.CsIfaceAttr{
+	public class IfAttr : Attribute{...}
+}
+從AttrCls上找出 global::Tsinswreng.CsIfaceAttr.IfAttr特性、並獲取其所有參數
+ */
+public class HndlAttrCls{
+	public ClassDeclarationSyntax AttrCls{get;set;} //AppJsonCtx
+	public GeneratorExecutionContext GenExeCtx{get;set;}
+
+	public HndlAttrCls(){
+
+
+	}
+
+	public void Process(){
+		var semanticModel = GenExeCtx.Compilation.GetSemanticModel(AttrCls.SyntaxTree);
+		var classSymbol = semanticModel.GetDeclaredSymbol(AttrCls) as INamedTypeSymbol;
+
+		if (classSymbol == null)
+			return;
+
+		// 尋找 IfAttr 特性
+		var Attrs = classSymbol.GetAttributes();
+		foreach(var attr in Attrs){
+			if(attr.AttributeClass?.ToDisplayString() == Names.Ns +"."+nameof(IfaceGen)){
+
+			}
+		}
+
+		var ifAttr = classSymbol.GetAttributes()
+			.FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == Names.Ns +"."+nameof(IfaceGen));
+
+		if (ifAttr == null){
+			return;
+		}
+
+		//禁止無名參數
+		// 提取所有具名或位置參數
+		// foreach (var arg in ifAttr.ConstructorArguments){
+		// 	// 處理位置參數
+		// 	var value = arg.Value;
+		// 	// 可根據需要處理 value
+		// }
+
+		foreach (var namedArg in ifAttr.NamedArguments){
+			// 處理具名參數
+			var name = namedArg.Key;
+			var value = namedArg.Value.Value;
+			// 可根據需要處理 name 與 value
+		}
+	}
+
+
+}
+
+
+/*
+		var SemanticModel = GenExeCtx.Compilation.GetSemanticModel(AttrCls.SyntaxTree);
+		var AttrClsSymbol = SemanticModel.GetDeclaredSymbol(AttrCls) as INamedTypeSymbol;
+		if(AttrClsSymbol == null){
+			return;
+		}
+		var Attrs = AttrClsSymbol.GetAttributes();
+		foreach(var Attr in Attrs){
+			if(Attr.N){
+
+			}
+		}
+ */

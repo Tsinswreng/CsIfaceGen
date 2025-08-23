@@ -1,0 +1,50 @@
+namespace Tsinswreng.CsIfaceAttr.SrcGen;
+
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+public partial class IfaceAttrSyntaxReceiver: ISyntaxReceiver{
+	public IList<ClassDeclarationSyntax> AttrClasses { get; } = new List<ClassDeclarationSyntax>();
+	public void OnVisitSyntaxNode(SyntaxNode syntaxNode){
+		if (syntaxNode is ClassDeclarationSyntax classDecl &&
+			classDecl.AttributeLists.Any(a =>
+				a.Attributes.Any(attr =>
+					attr.Name.ToString() ==  nameof(IfaceGen)
+				)
+			)
+		) {
+			AttrClasses.Add(classDecl);
+			//Logger.Append("DictTypeSyntaxReceiver");+
+			//Logger.Append(syntaxNode.ToString()); 完整ʹ類定義 源碼
+		}
+	}
+}
+
+
+[Generator]
+public partial class IfaceAttrGen : ISourceGenerator{
+	public void Initialize(GeneratorInitializationContext context) {
+		context.RegisterForSyntaxNotifications(()=>new IfaceAttrSyntaxReceiver());
+	}
+
+	public void Execute(GeneratorExecutionContext GenExeCtx) {
+		try{
+			if(GenExeCtx.SyntaxContextReceiver is not IfaceAttrSyntaxReceiver Receiver){
+				return;
+			}
+			foreach(var AttrCls in Receiver.AttrClasses){
+
+			}
+		}
+		catch (System.Exception){
+
+			throw;
+		}
+	}
+}
+
+

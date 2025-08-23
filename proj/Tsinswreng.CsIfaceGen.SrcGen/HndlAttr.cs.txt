@@ -1,0 +1,46 @@
+using Microsoft.CodeAnalysis;
+
+namespace Tsinswreng.CsIfaceAttr.SrcGen;
+
+public class HndlAttr{
+	public HndlAttrCls HndlAttrCls{get;set;}
+	public AttributeData Attr{get;set;}
+
+	public HndlAttr(
+		HndlAttrCls HndlAttrCls
+		,AttributeData Attr
+	){
+		this.HndlAttrCls = HndlAttrCls;
+		this.Attr = Attr;
+		InitAttrArgs();
+	}
+
+	public str TypePlaceholder{get;set;} = "";
+	public str Output{get;set;} = "";
+	public INamedTypeSymbol ParentType{get;set;} = null!;
+
+	void InitAttrArgs(){
+		foreach (var namedArg in Attr.NamedArguments){
+			var name = namedArg.Key;
+			var value = namedArg.Value.Value;
+			if(name == nameof(IfaceGen.TypePlaceHolder)){
+				TypePlaceholder = value?.ToString()??"";
+			}else if(name == nameof(IfaceGen.Template)){
+				Output = value?.ToString()??"";
+			}else if(name == nameof(IfaceGen.ParentType)){
+				if(value is INamedTypeSymbol ns){
+					ParentType = ns;
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="TypeStr">如global::MyNamespace.MyType</param>
+	/// <returns></returns>
+	str GenOutPut(str TypeStr){
+		return Output.Replace(TypePlaceholder, TypeStr);
+	}
+}
