@@ -9,6 +9,11 @@ public class IfaceGen
 	:System.Attribute
 	//,IIfaceGen
 {
+
+	public str? Name{get;set;}
+	/// <summary>
+	/// 父類型 接口或類
+	/// </summary>
 	public Type ParentType{get;set;}
 	//ph: placeholder
 	public str? PhFullType{get;set;}
@@ -22,6 +27,8 @@ public class IfaceGen
 	/// 相對于項目根目錄之輸出目錄
 	/// 若指定則寫文件至相應目錄ⁿ不用AddSource
 	/// 開頭不用加/
+	/// 若指定˪此、且項目中同時配置˪「把源生成器ʹʃ成ʹ輸出目錄(CompilerGeneratedFilesOutputPath)」、
+	/// 則宜先清源生成器ʹʃ成ʹ輸出目錄、否則蜮衝突
 	/// </summary>
 	public str? OutDir{get;set;}
 }

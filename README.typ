@@ -1,3 +1,7 @@
+=
+
+
+= 例
 ```cs
 
 //此特性爲源生成器庫提供
@@ -65,7 +69,15 @@ namespace Ngaq.Core.Infra{
 注意: IfaceGen特性可以在一個類型(接口, 類, 結構體等)上聲明多次 傳不同參數
 也可以有在多個類型上聲明多次IfaceGen特性
 
-用c\# 實現。
+//用c\# 實現。
 
 
 
+
+
+= 構建命令行工具
+
+```bash
+# pwd=Tsinswreng.CsIfaceGen.Cli/
+dotnet publish -c Release -r win-x64
+```

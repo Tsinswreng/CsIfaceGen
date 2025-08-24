@@ -1,3 +1,5 @@
+namespace Tsinswreng.CsIfaceGen.SrcGen;
+
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -6,33 +8,29 @@ using System.Security.Cryptography;
 using System.Text;
 using System;
 using System.IO;
-
-namespace Tsinswreng.CsIfaceGen.SrcGen;
-
-[Generator]
-public sealed class Generator : ISourceGenerator {
-	public void Initialize(GeneratorInitializationContext context) {
-		// 无需额外初始化
-	}
-
-	public void Execute(GeneratorExecutionContext context) {
-		// 编译中所有的类型
-		Logger.Append("11111");//t
+using System.Threading.Tasks;
 
 
-		if (context.AnalyzerConfigOptions.GlobalOptions
-			.TryGetValue("build_property.ProjectDir", out var ProjectDir)
-		){
-			Logger.Append(ProjectDir);//t
-		}
+public class CtxCodeGenResult{
+	public IArgIfaceGen ArgIfaceGen{get;set;}
+	public str Code{get;set;} = "";
+	public str HintName{get;set;} = "";
+}
 
-		var allTypes = context.Compilation.SourceModule.GlobalNamespace
+public class CfgGen{
+	//public str? ProjectDir{get;set;}
+	public Func<CtxCodeGenResult, CT, Task<nil>>? FnAddSrc{get;set;}
+}
+
+public class SvcGen {
+	public async Task<nil> ExeAsy(
+		Compilation Compilation
+		,CfgGen DtoGen
+		,CT Ct
+	){
+
+		var allTypes = Compilation.SourceModule.GlobalNamespace
 			.GetAllNamedTypes();
-
-		// 1) 找到所有打了 IfaceGenAttribute 的符号
-		// var ifaceGenAttrs = context.Compilation.Assembly.GetAttributes()
-		// 	.Where(ad => ad.AttributeClass?.Name == nameof(IfaceGen))
-		// ;
 
 		// 拿到所有类型（含嵌套）后，再收集特性
 		var ifaceGenAttrs = allTypes
@@ -50,35 +48,29 @@ public sealed class Generator : ISourceGenerator {
 
 			// 3) 找出 ParentType 的所有子类型
 			var subTypes = allTypes
-				.Where(t => IsSubType(t, parentType, context.Compilation))
+				.Where(t => IsSubType(t, parentType, Compilation))
 			;
 
 			// 4) 为每个子类型生成代码
 			foreach (var sub in subTypes) {
 				//var fullName = GetFullyQualifiedName(sub);
 				var fullName = ToolSrcGen.ResolveFullTypeFitsTypeof(sub);
-				var idFullType = ToolSrcGen.ToIdentifierSafeFullType(fullName);
+				var idFullType = ToolGen.ToIdentifierSafeFullType(fullName);
 				var sourceText = template.Replace(FullTypePh, fullName);
 				sourceText = sourceText.Replace(IdFullTypePh, idFullType);
 
 				var hintName = $"{sub.Name}_{parentType.Name}_Gen_{GetSha256HashBase64Url(template)}.g.cs";
-				if(
-					string.IsNullOrEmpty(AttrArg.OutDir)
-					|| ProjectDir == null
-				){
-					context.AddSource(hintName, sourceText);
-				}else{
-					var FullOutDir = CombinePath(ProjectDir, AttrArg.OutDir??"");
-					var FullFileName = FullOutDir + "/" + hintName;
-					ToolSrcGen.EnsureFile(FullFileName);
-					Logger.Append("FullOutDir: "+FullOutDir);//t
-					Logger.Append("FullFileName: "+FullFileName);//t
-					#pragma warning disable RS1035
-					System.IO.File.WriteAllText(FullFileName, sourceText);
+				var Result = new CtxCodeGenResult{
+					ArgIfaceGen = AttrArg,
+					Code = sourceText,
+					HintName = hintName,
+				};
+				if(DtoGen.FnAddSrc != null){
+					await DtoGen.FnAddSrc(Result, Ct);
 				}
-
 			}
 		}
+		return NIL;
 	}
 
 	// ------------------------ 辅助方法 ------------------------
@@ -176,9 +168,10 @@ public sealed class Generator : ISourceGenerator {
 
 		// 普通 Base64 → URL 安全 Base64
 		string base64 = Convert.ToBase64String(hash)
-							.Replace('+', '-')
-							.Replace('/', '_')
-							.TrimEnd('=');
+			.Replace('+', '-')
+			.Replace('/', '_')
+			.TrimEnd('=')
+		;
 		return base64;
 	}
 
@@ -257,30 +250,6 @@ class ToolSrcGen{
 		else{
 			// 引用类型，不加问号，比如 "System.String"
 			return T.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-		}
-	}
-	public static str ToIdentifierSafeFullType(str FullType){
-		var R = FullType.Replace("global::", "");
-		R = R.Replace("_", "__");
-		R = R.Replace("<", "_");
-		R = R.Replace(">", "_");
-		R = R.Replace(".", "_");
-		return R;
-	}
-
-	public static void EnsureFile(string filePath) {
-		if (string.IsNullOrWhiteSpace(filePath)){
-			return;
-		}
-
-		var directory = Path.GetDirectoryName(filePath);
-		if (!string.IsNullOrEmpty(directory)) {
-			Directory.CreateDirectory(directory);
-		}
-
-		if (!File.Exists(filePath)) {
-			// 创建空文件，使用 FileStream 立即释放资源
-			using (File.Create(filePath)) { }
 		}
 	}
 }

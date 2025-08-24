@@ -21,4 +21,32 @@ public class ArgIfaceGen
 	/// 開頭不用加/
 	/// </summary>
 	public str? OutDir{get;set;}
+	public str? FilePrefix{get;set;}
+
+
+	public static IArgIfaceGen GetArg(
+		AttributeData Attr
+	){
+		IArgIfaceGen R = new ArgIfaceGen();
+		foreach (var namedArg in Attr.NamedArguments){
+			var name = namedArg.Key;
+			var value = namedArg.Value.Value;
+			if(name == nameof(IfaceGen.PhFullType)){
+				R.PhFullType = value?.ToString()??"";
+			}else if(name == nameof(IfaceGen.Template)){
+				R.Template = value?.ToString()??"";
+			}else if(name == nameof(IfaceGen.ParentType)){
+				if(value is INamedTypeSymbol ns){
+					R.ParentType = ns;
+				}
+			}else if(name == nameof(IfaceGen.PhIdentifierSafeFullType)){
+				R.PhIdentifierSafeFullType = value?.ToString()??"";
+			}else if(name == nameof(IfaceGen.OutDir)){
+				R.OutDir = value?.ToString();
+			}else if(name == nameof(IfaceGen.Name)){
+				R.FilePrefix = value?.ToString();
+			}
+		}
+		return R;
+	}
 }

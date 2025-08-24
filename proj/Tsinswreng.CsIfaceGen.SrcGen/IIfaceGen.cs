@@ -19,4 +19,5 @@ public interface IArgIfaceGen{
 	/// 開頭不用加/
 	/// </summary>
 	public str? OutDir{get;set;}
+	public str? FilePrefix{get;set;}
 }
