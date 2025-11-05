@@ -21,7 +21,19 @@ public class ArgIfaceGen
 	/// 開頭不用加/
 	/// </summary>
 	public str? OutDir{get;set;}
-	public str? FilePrefix{get;set;}
+	public str? FileNamePrefix{get;set;}
+	/// <summary>
+	/// 有值旹 輸出到單文件
+	/// </summary>
+	public str? OutFile{get;set;}
+	/// <summary>
+	/// 輸出到單文件時 額外賦于文件首部之內容
+	/// </summary>
+	public str? Head{get;set;}
+	/// <summary>
+	/// 輸出到單文件時 額外賦于文件尾部之內容
+	/// </summary>
+	public str? Tail{get;set;}
 
 
 	public static IArgIfaceGen GetArg(
@@ -44,7 +56,13 @@ public class ArgIfaceGen
 			}else if(name == nameof(IfaceGen.OutDir)){
 				R.OutDir = value?.ToString();
 			}else if(name == nameof(IfaceGen.Name)){
-				R.FilePrefix = value?.ToString();
+				R.FileNamePrefix = value?.ToString();
+			}else if(name == nameof(IfaceGen.OutDir)){
+				R.OutFile = value?.ToString();
+			}else if(name == nameof(IfaceGen.Head)){
+				R.Head = value?.ToString();
+			}else if(name == nameof(IfaceGen.Tail)){
+				R.Tail = value?.ToString();
 			}
 		}
 		return R;

@@ -19,5 +19,17 @@ public interface IArgIfaceGen{
 	/// 開頭不用加/
 	/// </summary>
 	public str? OutDir{get;set;}
-	public str? FilePrefix{get;set;}
+	public str? FileNamePrefix{get;set;}
+/// <summary>
+	/// 有值旹 輸出到單文件 (未實現)
+	/// </summary>
+	public str? OutFile{get;set;}
+	/// <summary>
+	/// 輸出到單文件時 額外賦于文件首部之內容 (未實現)
+	/// </summary>
+	public str? Head{get;set;}
+	/// <summary>
+	/// 輸出到單文件時 額外賦于文件尾部之內容 (未實現)
+	/// </summary>
+	public str? Tail{get;set;}
 }

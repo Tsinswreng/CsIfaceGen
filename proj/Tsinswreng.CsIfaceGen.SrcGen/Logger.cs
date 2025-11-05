@@ -1,5 +1,5 @@
 #pragma warning disable RS1035
-#define TswG_DEBUG
+// #define TswG_DEBUG
 namespace Tsinswreng.CsIfaceGen.SrcGen;
 using System.IO;
 

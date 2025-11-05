@@ -9,10 +9,12 @@ public class IfaceGen
 	:System.Attribute
 	//,IIfaceGen
 {
-
+	/// <summary>
+	/// 生成ʹ文件ʹ前綴
+	/// </summary>
 	public str? Name{get;set;}
 	/// <summary>
-	/// 父類型 接口或類
+	/// 父類型 接口或類 //TODO 改成 支持設多個
 	/// </summary>
 	public Type ParentType{get;set;}
 	//ph: placeholder
@@ -31,4 +33,17 @@ public class IfaceGen
 	/// 則宜先清源生成器ʹʃ成ʹ輸出目錄、否則蜮衝突
 	/// </summary>
 	public str? OutDir{get;set;}
+
+	/// <summary>
+	/// 有值旹 輸出到單文件
+	/// </summary>
+	public str? OutFile{get;set;}
+	/// <summary>
+	/// 輸出到單文件時 額外賦于文件首部之內容
+	/// </summary>
+	public str? Head{get;set;}
+	/// <summary>
+	/// 輸出到單文件時 額外賦于文件尾部之內容
+	/// </summary>
+	public str? Tail{get;set;}
 }

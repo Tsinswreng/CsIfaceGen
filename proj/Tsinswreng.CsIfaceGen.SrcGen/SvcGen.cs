@@ -37,7 +37,6 @@ public class SvcGen {
 		.SelectMany(t => t.GetAttributes())
 		.Where(ad => ad.AttributeClass?.Name == nameof(IfaceGen));
 
-		// 2) 遍历每个 IfaceGenAttribute 实例
 		foreach (var attr in ifaceGenAttrs) {
 			var AttrArg = GetArg(attr);
 			var parentType = AttrArg.ParentType;

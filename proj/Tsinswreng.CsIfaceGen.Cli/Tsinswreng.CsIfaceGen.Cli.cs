@@ -55,7 +55,7 @@ class Program {
 				// context.AddSource(CtxCode.HintName, CtxCode.Code);
 			}else{
 				var FullOutDir = ToolGen.CombinePath(OutDir, AttrArg.OutDir??"");
-				var FullFileName = FullOutDir + "/" + AttrArg.FilePrefix + CtxCode.HintName;
+				var FullFileName = FullOutDir + "/" + AttrArg.FileNamePrefix + CtxCode.HintName;
 				ToolGen.EnsureFile(FullFileName);
 				// Logger.Append("FullOutDir: "+FullOutDir);//t
 				// Logger.Append("FullFileName: "+FullFileName);//t
